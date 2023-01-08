@@ -7,14 +7,14 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class PlainCommand implements Iterable<String> {
+public class PassedCommand implements Iterable<String> {
 
     private final String command;
     private final List<String> pieces;
     @Accessors(fluent = true)
     private final boolean hasSpaceAtTheEnd;
 
-    PlainCommand(String command) {
+    PassedCommand(String command) {
         this.command = command;
         this.pieces = Collections.unmodifiableList(Arrays.asList(command.trim().split(" ")));
         this.hasSpaceAtTheEnd = command.endsWith(" ");
