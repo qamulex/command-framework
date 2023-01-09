@@ -1,16 +1,13 @@
 package me.qamulex.cfmw.condition;
 
 import me.qamulex.cfmw.context.CommandContext;
-import me.qamulex.cfmw.model.CommandNode;
 
-public abstract class CommandCondition {
+public interface CommandCondition {
 
-    private final String name;
+    boolean test(CommandContext ctx);
 
-    public CommandCondition(String name) {
-        this.name = name;
-    }
+    default void failed(CommandContext ctx) { }
 
-    public abstract boolean test(CommandContext ctx, CommandNode arg);
+    default void passed(CommandContext ctx) { }
 
 }

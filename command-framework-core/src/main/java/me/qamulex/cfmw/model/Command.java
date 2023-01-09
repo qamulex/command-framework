@@ -2,9 +2,7 @@ package me.qamulex.cfmw.model;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
-import me.qamulex.cfmw.CapturedArguments;
-import me.qamulex.cfmw.CommandInvoker;
-import me.qamulex.cfmw.context.ExecutionContext;
+import me.qamulex.cfmw.condition.CommandCondition;
 import me.qamulex.cfmw.context.SuggestionContext;
 import me.qamulex.cfmw.exception.CommandRegistrationException;
 
@@ -12,10 +10,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
-public abstract class Command extends CommandNode {
+public abstract class Command extends CommandNode implements Executable {
 
     private final List<String> alternatives;
     private final boolean suggestAllAlternatives;
+
+    protected List<CommandCondition> conditions = new ArrayList<>();
 
     public Command(String name, boolean suggestAllAlternatives, String... alternatives) {
         super(name);
@@ -31,8 +31,6 @@ public abstract class Command extends CommandNode {
     }
 
     protected abstract void init(CommandInitializer init);
-
-    public abstract void execute(ExecutionContext ctx, CommandInvoker invoker, CapturedArguments arguments);
 
     public boolean hasName(String name) {
         return alternatives.contains(name);
@@ -56,7 +54,7 @@ public abstract class Command extends CommandNode {
     public Command registerCommand(Class<? extends Command> commandClass) {
         CommandNode local = getLocal();
         if (local.getSuccessors().stream().anyMatch(commandClass::isInstance))
-            throw new CommandRegistrationException("command of this type is already registered");
+            throw new CommandRegistrationException("command with this type is already registered");
         Command command = commandClass.getConstructor().newInstance();
         if (local.getSuccessors().stream()
                 .map(CommandNode::asCommand)
@@ -65,7 +63,7 @@ public abstract class Command extends CommandNode {
                 .anyMatch(command::hasName))
             throw new CommandRegistrationException("command with same name is already registered");
         command.setParent(this);
-        command.init(new CommandInitializer(command));
+        CommandInitializer.init(command);
         local.getSuccessors().add(command);
         return this;
     }
