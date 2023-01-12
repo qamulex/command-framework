@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import me.qamulex.cfmw.context.SuggestionContext;
+import me.qamulex.cfmw.model.argument.Argument;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,13 +24,13 @@ public abstract class CommandNode {
     public void suggest(SuggestionContext ctx) { }
 
     public final Optional<CommandNode> getSuccessor(String name) {
-        return getSuccessors().stream()
+        return successors.stream()
                 .filter(node -> node.getName().equals(name))
                 .findFirst();
     }
 
     public final CommandNode getLocal() {
-        return getSuccessors().stream()
+        return successors.stream()
                 .filter(CommandNode::isArgument)
                 .findAny()
                 .map(CommandNode::getLocal)

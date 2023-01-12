@@ -12,7 +12,7 @@ public class Main {
         }
 
         @Override
-        protected CommandCondition get(Object... args) {
+        protected CommandCondition createCondition(Object... args) {
             return null;
         }
 
